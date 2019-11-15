@@ -35,7 +35,6 @@ func threadexperiment(d_time time.Duration){
 
 func firstRun(){
 	js.Global().Get("localStorage").Call("setItem", "start_time", time.Now().Unix())
-	
 }
 
 
