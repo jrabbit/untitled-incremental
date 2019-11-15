@@ -21,16 +21,16 @@ var scoreboard Scoreboard
 
 type processor func(time.Duration)
 
-func threadexperiment(d_time time.Duration) {
-	// can we pass functions, can we call them sequentially?
-	//identity function
-	idfn := func(t time.Duration) { scoreboard.Teeth = t.Seconds() }
-	var funcs []processor
-	funcs[0] = idfn
-	for _, f := range funcs {
-		f(d_time)
-	}
-}
+//func threadexperiment(d_time time.Duration) {
+//	// can we pass functions, can we call them sequentially?
+//	//identity function
+//	idfn := func(t time.Duration) { scoreboard.Teeth = t.Seconds() }
+//	var funcs []processor
+//	funcs[0] = idfn
+//	for _, f := range funcs {
+//		f(d_time)
+//	}
+//}
 
 func firstRun() {
 	cb := func() {
