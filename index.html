@@ -1,4 +1,4 @@
-<html>
+<html lang="en">
 <head>
 	<meta charset="utf-8"/>
 	<title>untitled incremental</title>
@@ -10,29 +10,66 @@
 		});
 	</script>
 	<style>
+		@import url('https://fonts.googleapis.com/css?family=Bangers|Montserrat&display=swap');
+		html{
+			font-family: 'Montserrat', sans-serif;
+			font-size: 24pt;
+		}
 		nav{
 			display: flex;
 		}
 		nav > *{
-			margin-left: 50px;
-			margin-right: 50px;
+			margin-left: 20px;
+			margin-right: 20px;
+		}
+		h1, h2{
+			font-family: 'Bangers', cursive;
+			font-size: 45pt;
+			text-transform: uppercase;
+			letter-spacing: 0.1rem;
 		}
 		footer{
 			position: fixed;
 			bottom: 0;
+		}
+		footer a {
+			text-decoration: none;
+			color: black;
+		}
+		button{
+			background-color: slateblue;
+			color: white;
+			font-family: 'Montserrat', sans-serif;
+			font-size: 25pt;
+		}
+		button.game-init{
+			font-family: 'Bangers', cursive;
+			color: hotpink;
+			background-color: aliceblue;
+			border: none;
+			border-radius: 15px;
+			padding: 20px;
+			text-transform: uppercase;
+			font-size: 64pt;
 		}
 	</style>
 </head>
 	<body>
 	<nav>
 	<h1>untitled incremental</h1>
-	<h2>teeth</h2>
-	<button>intentionally left blank</button>
-	<span>Scorecard<span>
+	<h2 class="teeth">0 teeth</h2>
+		<div class="button-bar">
+			<button>intentionally left blank</button>
+			<button>scorecard</button>
+		</div>
 	</nav>
-	
+
+	<noscript>This is a fancy webassembly app. Source may be inspected at <a href="https://github.com/jrabbit/untitled-incremental">Github</a></noscript>
+	<section id="game-area">
+		<button class="game-init">start game</button>
+	</section>
 	<footer>
-	<p>teeth teeth teeth</p>
+		<p><a href="https://github.com/jrabbit/untitled-incremental">agplv3 source</a></p>
 	</footer>
 	</body>
 </html>
