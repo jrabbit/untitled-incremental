@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"syscall/js"
 	"time"
-	"log"
 )
 
 type Level struct {
@@ -54,7 +54,7 @@ func query(qs string) js.Value {
 func blit(this js.Value, args []js.Value) interface{} {
 	js_time := js.Global().Get("localStorage").Call("getItem", "start_time").String()
 	i, _ := strconv.ParseInt(js_time, 10, 64)
-	set_time := time.Unix(i,0)
+	set_time := time.Unix(i, 0)
 	d_time := time.Now().Sub(set_time)
 	log.Println(d_time)
 	log.Println(set_time)
@@ -70,7 +70,7 @@ func secondRun() {
 	cb := js.FuncOf(blit)
 	done := make(chan bool)
 	js.Global().Get("window").Call("setInterval", cb, UPDATE_FREQ)
-	<-done	
+	<-done
 }
 
 // PerformanceObserver or https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval
