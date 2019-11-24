@@ -43,8 +43,8 @@ func firstRun() {
 		return nil
 	}
 	query(".game-init").Call("addEventListener", "click", js.FuncOf(cb))
-	<-done
 	secondRun()
+	<-done
 }
 
 func query(qs string) js.Value {
@@ -82,11 +82,6 @@ func main() {
 		//user's first time
 		firstRun()
 	} else {
-		//set_time, _ := time.Parse(time.UnixDate, js_time.String())
-		//d_time := time.Now().Sub(set_time)
 		secondRun()
 	}
-	fmt.Println(js_time)
-	//fmt.Printf("time since game init: %d sec", d_time)
-	//threadexperiment(time.Now().Sub(g))
 }
