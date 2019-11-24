@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"errors"
 	"strconv"
 	"syscall/js"
 	"time"
@@ -43,7 +44,6 @@ func firstRun() {
 		return nil
 	}
 	query(".game-init").Call("addEventListener", "click", js.FuncOf(cb))
-	secondRun()
 	<-done
 }
 
@@ -51,10 +51,25 @@ func query(qs string) js.Value {
 	return js.Global().Get("document").Call("querySelector", qs)
 }
 
+var ErrJSNull = errors.New("expected string but got null")
+
+func nullableString(thing js.Value) (string, error) {
+	if thing == js.Null(){
+		return "", fmt.Errorf("%q", ErrJSNull)
+	}
+	return thing.String(), nil
+}
+
 func blit(this js.Value, args []js.Value) interface{} {
-	js_time := js.Global().Get("localStorage").Call("getItem", "start_time").String()
-	i, _ := strconv.ParseInt(js_time, 10, 64)
-	set_time := time.Unix(i, 0)
+	js_time, err := nullableString(js.Global().Get("localStorage").Call("getItem", "start_time"))
+	var set_time time.Time
+	if err != nil{
+		js.Global().Get("localStorage").Call("setItem", "start_time", time.Now().Unix())
+		set_time = time.Now()
+	} else {
+		i, _ := strconv.ParseInt(js_time, 10, 64)
+		set_time = time.Unix(i, 0)
+	}
 	d_time := time.Now().Sub(set_time)
 	log.Println(d_time)
 	log.Println(set_time)
