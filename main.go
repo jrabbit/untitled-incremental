@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"math"
 	"strconv"
 	"syscall/js"
 	"time"
@@ -15,15 +17,72 @@ type Level struct {
 }
 
 type Scoreboard struct {
-	Teeth  int
-	Hats   int
-	Levels []Level
+	Teeth    int
+	Hats     int
+	BadStuff int
+	Levels   []Level
+}
+
+func (s *Scoreboard) BadStuffHappened(stuff int) {
+	s.BadStuff = stuff + s.BadStuff
 }
 
 var scoreboard Scoreboard
 
 const TeethPerChild = 20
 const TeethPerAdult = 32
+
+type PlanetX struct {
+	Kids            int
+	SonicFactor     int
+	Hidden          bool
+	LastCheckinTime time.Time
+}
+
+func (p *PlanetX) load() {
+	jsState, err := nullableString(js.Global().Get("localStorage").Call("getItem", "planet_state"))
+	if err != nil {
+		log.Print(err)
+	}
+	jsonErr := json.Unmarshal([]byte(jsState), p)
+	if jsonErr != nil {
+		log.Print(jsonErr)
+	}
+}
+
+func (p *PlanetX) CheckIn() {
+	previousTime := p.LastCheckinTime
+	now := time.Now()
+	dT := previousTime.Sub(now)
+	// do population model here
+	newKids := math.Pow(float64(p.Kids), 0.26) * float64(dT/(time.Minute*5))
+	p.Kids = p.Kids + int(newKids)
+	p.LastCheckinTime = now
+
+}
+
+func (p *PlanetX) getTeeth(number int) bool {
+	currTeeth := p.Kids * TeethPerChild
+	if currTeeth > number {
+		targetTeeth := currTeeth - number
+		p.Kids = targetTeeth / TeethPerChild
+		badStuff := targetTeeth % TeethPerChild
+		scoreboard.BadStuffHappened(badStuff)
+		return true
+	} else {
+		return false
+	}
+}
+func (p *PlanetX) save() {
+	outJson, err := json.Marshal(p)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		js.Global().Get("localStorage").Call("setItem", "planet_state", outJson)
+	}
+}
+
+var planetx PlanetX
 
 type processor func(time.Duration) int
 type Brick struct {
@@ -100,11 +159,13 @@ func secondRun() {
 
 func main() {
 	scoreboard = Scoreboard{}
+	planetx = PlanetX{}
 	jsTime := js.Global().Get("localStorage").Call("getItem", "start_time")
 	if jsTime == js.Null() {
 		//user's first time
 		firstRun()
 	} else {
+		planetx.load()
 		secondRun()
 	}
 }
