@@ -22,6 +22,9 @@ type Scoreboard struct {
 
 var scoreboard Scoreboard
 
+const TeethPerChild = 20
+const TeethPerAdult = 32
+
 type processor func(time.Duration) int
 type Brick struct {
 	Processor   processor
@@ -79,7 +82,6 @@ func blit(_ js.Value, _ []js.Value) interface{} {
 	log.Println(dTime)
 	log.Println(setTime)
 	threadExperiment(dTime)
-	scoreboard.Teeth = 1 * int(dTime.Seconds())
 	query("nav > h2.teeth").Set("textContent", fmt.Sprintf("%v teeth", scoreboard.Teeth))
 	fmt.Printf("%v hats", scoreboard.Hats)
 	return nil
