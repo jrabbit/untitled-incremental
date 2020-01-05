@@ -1,0 +1,15 @@
+footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    position: fixed;
+    bottom: 0;
+    font-size: 18pt;
+}
+footer div img {
+    height: 150px;
+}
+footer a {
+    text-decoration: none;
+    color: black;
+}

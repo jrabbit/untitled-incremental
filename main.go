@@ -1,9 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
-	"errors"
 	"strconv"
 	"syscall/js"
 	"time"
@@ -54,7 +54,7 @@ func query(qs string) js.Value {
 var ErrJSNull = errors.New("expected string but got null")
 
 func nullableString(thing js.Value) (string, error) {
-	if thing == js.Null(){
+	if thing == js.Null() {
 		return "", fmt.Errorf("%q", ErrJSNull)
 	}
 	return thing.String(), nil
@@ -63,7 +63,7 @@ func nullableString(thing js.Value) (string, error) {
 func blit(this js.Value, args []js.Value) interface{} {
 	js_time, err := nullableString(js.Global().Get("localStorage").Call("getItem", "start_time"))
 	var set_time time.Time
-	if err != nil{
+	if err != nil {
 		js.Global().Get("localStorage").Call("setItem", "start_time", time.Now().Unix())
 		set_time = time.Now()
 	} else {

@@ -10,6 +10,7 @@
 	<meta property="og:image" content="contrib/noun_teeth_1534025.svg" />
     <link rel="shortcut icon" href="contrib/noun_teeth_1534025.svg" type="image/x-icon">
 	<script src="contrib/wasm_exec.js"></script>
+	<link rel="stylesheet" href="css/main.css" />
 	<script>
 		const go = new Go();
 		WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
@@ -35,15 +36,7 @@
 			text-transform: uppercase;
 			letter-spacing: 0.1rem;
 		}
-		footer{
-            display: flex;
-			position: fixed;
-			bottom: 0;
-		}
-		footer a {
-			text-decoration: none;
-			color: black;
-		}
+
 		button{
 			background-color: slateblue;
 			color: white;
@@ -76,9 +69,10 @@
 	<section id="game-area">
 		<button class="game-init">start game</button>
 	</section>
+
 	<footer>
-		<p><a href="https://github.com/jrabbit/untitled-incremental">agplv3 source</a></p>
-        <img class="teeth-icon" src="contrib/noun_teeth_1534025.svg" alt="teeth being held by a hand icon">
+		<div><a href="https://github.com/jrabbit/untitled-incremental"><abbr title="GNU Affero General Public License">AGPL</abbr> v3 source @ github</a></div>
+		<div><img class="teeth-icon" src="contrib/noun_teeth_1534025.svg" alt="teeth being held by a hand icon"></div>
 	</footer>
 	</body>
 </html>
