@@ -51,11 +51,11 @@ func (p *PlanetX) load() {
 }
 
 func (p *PlanetX) CheckIn() {
-	previousTime := p.LastCheckinTime
+	//previousTime := p.LastCheckinTime
 	now := time.Now()
-	dT := previousTime.Sub(now)
+	//dT := previousTime.Sub(now)
 	// do population model here
-	newKids := math.Pow(float64(p.Kids), 0.26) * float64(dT/(time.Minute*5))
+	newKids := math.Pow(float64(p.Kids), 0.26)
 	p.Kids = p.Kids + int(newKids)
 	p.LastCheckinTime = now
 
@@ -106,6 +106,7 @@ func firstRun() {
 	done := make(chan bool)
 	cb := func(this js.Value, args []js.Value) interface{} {
 		js.Global().Get("localStorage").Call("setItem", "start_time", time.Now().Unix())
+		planetx.Kids = 500
 		secondRun()
 		fmt.Println("we started!!!")
 		return nil
@@ -127,6 +128,12 @@ func nullableString(thing js.Value) (string, error) {
 	return thing.String(), nil
 }
 
+func procPlanetX(_ js.Value, _ []js.Value) interface{} {
+	planetx.CheckIn()
+	log.Printf("planetx: %+v", planetx)
+	return nil
+}
+
 func blit(_ js.Value, _ []js.Value) interface{} {
 	jsTime, err := nullableString(js.Global().Get("localStorage").Call("getItem", "start_time"))
 	var setTime time.Time
@@ -138,11 +145,11 @@ func blit(_ js.Value, _ []js.Value) interface{} {
 		setTime = time.Unix(i, 0)
 	}
 	dTime := time.Now().Sub(setTime)
-	log.Println(dTime)
-	log.Println(setTime)
+	//log.Printf("%d dTime", dTime)
+	//log.Printf("%v game started", setTime)
 	threadExperiment(dTime)
 	query("nav > h2.teeth").Set("textContent", fmt.Sprintf("%v teeth", scoreboard.Teeth))
-	fmt.Printf("%v hats", scoreboard.Hats)
+	log.Printf("%+v scoreboard", scoreboard)
 	return nil
 }
 
@@ -150,8 +157,10 @@ func secondRun() {
 	const UpdateFreq = 1000
 	query("#game-area").Call("removeChild", query(".game-init"))
 	cb := js.FuncOf(blit)
+	planetXCB := js.FuncOf(procPlanetX)
 	done := make(chan bool)
 	js.Global().Get("window").Call("setInterval", cb, UpdateFreq)
+	js.Global().Get("window").Call("setInterval", planetXCB, 5*UpdateFreq)
 	<-done
 }
 
@@ -159,7 +168,7 @@ func secondRun() {
 
 func main() {
 	scoreboard = Scoreboard{}
-	planetx = PlanetX{}
+	planetx = PlanetX{Kids: 500, Hidden: true, SonicFactor: 1}
 	jsTime := js.Global().Get("localStorage").Call("getItem", "start_time")
 	if jsTime == js.Null() {
 		//user's first time
