@@ -22,18 +22,23 @@ type Scoreboard struct {
 
 var scoreboard Scoreboard
 
-type processor func(time.Duration)
+type processor func(time.Duration) int
+type Brick struct {
+	Processor   processor
+	OutputField *int
+}
 
-//func threadexperiment(d_time time.Duration) {
-//	// can we pass functions, can we call them sequentially?
-//	//identity function
-//	idfn := func(t time.Duration) { scoreboard.Teeth = t.Seconds() }
-//	var funcs []processor
-//	funcs[0] = idfn
-//	for _, f := range funcs {
-//		f(d_time)
-//	}
-//}
+func threadExperiment(dTime time.Duration) {
+	// can we pass functions, can we call them sequentially?
+	//identity function
+	idfn := func(t time.Duration) int { return int(t.Seconds()) }
+	b := Brick{Processor: idfn, OutputField: &scoreboard.Teeth}
+	bricks := []Brick{b}
+	for _, brick := range bricks {
+		out := brick.Processor(dTime)
+		*brick.OutputField = out
+	}
+}
 
 func firstRun() {
 	done := make(chan bool)
@@ -60,31 +65,32 @@ func nullableString(thing js.Value) (string, error) {
 	return thing.String(), nil
 }
 
-func blit(this js.Value, args []js.Value) interface{} {
-	js_time, err := nullableString(js.Global().Get("localStorage").Call("getItem", "start_time"))
-	var set_time time.Time
+func blit(_ js.Value, _ []js.Value) interface{} {
+	jsTime, err := nullableString(js.Global().Get("localStorage").Call("getItem", "start_time"))
+	var setTime time.Time
 	if err != nil {
 		js.Global().Get("localStorage").Call("setItem", "start_time", time.Now().Unix())
-		set_time = time.Now()
+		setTime = time.Now()
 	} else {
-		i, _ := strconv.ParseInt(js_time, 10, 64)
-		set_time = time.Unix(i, 0)
+		i, _ := strconv.ParseInt(jsTime, 10, 64)
+		setTime = time.Unix(i, 0)
 	}
-	d_time := time.Now().Sub(set_time)
-	log.Println(d_time)
-	log.Println(set_time)
-	scoreboard.Teeth = 1 * int(d_time.Seconds())
+	dTime := time.Now().Sub(setTime)
+	log.Println(dTime)
+	log.Println(setTime)
+	threadExperiment(dTime)
+	scoreboard.Teeth = 1 * int(dTime.Seconds())
 	query("nav > h2.teeth").Set("textContent", fmt.Sprintf("%v teeth", scoreboard.Teeth))
 	fmt.Printf("%v hats", scoreboard.Hats)
 	return nil
 }
 
 func secondRun() {
-	const UPDATE_FREQ = 1000
+	const UpdateFreq = 1000
 	query("#game-area").Call("removeChild", query(".game-init"))
 	cb := js.FuncOf(blit)
 	done := make(chan bool)
-	js.Global().Get("window").Call("setInterval", cb, UPDATE_FREQ)
+	js.Global().Get("window").Call("setInterval", cb, UpdateFreq)
 	<-done
 }
 
@@ -92,8 +98,8 @@ func secondRun() {
 
 func main() {
 	scoreboard = Scoreboard{}
-	js_time := js.Global().Get("localStorage").Call("getItem", "start_time")
-	if js_time == js.Null() {
+	jsTime := js.Global().Get("localStorage").Call("getItem", "start_time")
+	if jsTime == js.Null() {
 		//user's first time
 		firstRun()
 	} else {
