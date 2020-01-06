@@ -13,3 +13,21 @@ footer a {
     text-decoration: none;
     color: black;
 }
+
+nav {
+    display: flex;
+}
+
+@media (max-width : 520px) {
+    nav {
+        display: flex;
+        flex-direction: column;
+        font-size: smaller;
+    }
+    footer {
+        font-size: 8pt;
+    }
+    footer div img {
+        height: 50px;
+    }
+}
