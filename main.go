@@ -1,13 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"math"
 	"strconv"
 	"syscall/js"
+	"github.com/fxamacker/cbor"
 	"time"
 )
 
@@ -44,7 +44,7 @@ func (p *PlanetX) load() {
 	if err != nil {
 		log.Print(err)
 	}
-	jsonErr := json.Unmarshal([]byte(jsState), p)
+	jsonErr := cbor.Unmarshal([]byte(jsState), p)
 	if jsonErr != nil {
 		log.Print(jsonErr)
 	}
@@ -74,7 +74,7 @@ func (p *PlanetX) getTeeth(number int) bool {
 	}
 }
 func (p *PlanetX) save() {
-	outJson, err := json.Marshal(p)
+	outJson, err := cbor.Marshal(p, cbor.EncOptions{})
 	if err != nil {
 		log.Fatal(err)
 	} else {
