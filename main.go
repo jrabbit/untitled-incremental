@@ -36,7 +36,7 @@ type PlanetX struct {
 	Kids            int
 	SonicFactor     int
 	Hidden          bool
-	LastCheckinTime time.Time
+	LastCheckinTime time.Time `json:",omitempty"`
 }
 
 func (p *PlanetX) load() {
@@ -58,6 +58,7 @@ func (p *PlanetX) CheckIn() {
 	newKids := math.Pow(float64(p.Kids), 0.26)
 	p.Kids = p.Kids + int(newKids)
 	p.LastCheckinTime = now
+	p.save()
 
 }
 
@@ -76,9 +77,9 @@ func (p *PlanetX) getTeeth(number int) bool {
 func (p *PlanetX) save() {
 	outJson, err := json.Marshal(p)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	} else {
-		js.Global().Get("localStorage").Call("setItem", "planet_state", outJson)
+		js.Global().Get("localStorage").Call("setItem", "planet_state", string(outJson))
 	}
 }
 

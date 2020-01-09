@@ -17,4 +17,5 @@ def auto(c):
 def tinygo(c, dev=False):
     "installed via debian package"
     # https://github.com/tinygo-org/tinygo
+    # https://tinygo.org/getting-started/linux/
     c.run("/usr/local/tinygo/bin/tinygo build -o wasm.wasm -target=wasm main.go")
