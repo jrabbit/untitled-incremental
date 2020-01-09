@@ -1,4 +1,5 @@
 from invoke import task
+from fabric import Connection
 
 @task
 def build(c):
@@ -12,7 +13,16 @@ def vet(c):
 def auto(c):
     c.run("ag -l | entr -rc inv build", pty=True)
 
-
+@task
+def deploy(c):
+    conn = Connection("trotsky")
+    with conn.cd("~/src/untitled-incremental"):
+        conn.run("git fetch")
+        conn.run("git stash")
+        conn.run("git pull")
+        conn.run("git stash pop")
+        conn.put("main.wasm")
+        
 @task
 def tinygo(c, dev=False):
     "installed via debian package"

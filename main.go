@@ -59,7 +59,6 @@ func (p *PlanetX) CheckIn() {
 	p.Kids = p.Kids + int(newKids)
 	p.LastCheckinTime = now
 	p.save()
-
 }
 
 func (p *PlanetX) getTeeth(number int) bool {
