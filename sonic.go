@@ -12,6 +12,7 @@ type Position struct {
 
 type Sonic struct {
 	Position Position
+	Snake    bool
 }
 
 func keyDown(_ js.Value, args []js.Value) interface{} {
@@ -22,9 +23,13 @@ func keyDown(_ js.Value, args []js.Value) interface{} {
 	case "ArrowRight":
 		sonic.Position.x += 1
 	case "ArrowUp":
-		sonic.Position.y += 1
+		if sonic.Snake {
+			sonic.Position.y += 1
+		}
 	case "ArrowDown":
-		sonic.Position.y -= 1
+		if sonic.Snake {
+			sonic.Position.y -= 1
+		}
 	default:
 		log.Printf("random fucking key? %v", key)
 	}
@@ -34,10 +39,9 @@ func keyDown(_ js.Value, args []js.Value) interface{} {
 func sonicTime() {
 	sect := query("section.sonic")
 	sect.Call("removeAttribute", "hidden")
-	// keybinds
+	// key binds done here
 	cb := js.FuncOf(keyDown)
 	js.Global().Get("document").Call("addEventListener", "keydown", cb)
-
 }
 
 func askSonic() {

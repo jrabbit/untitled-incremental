@@ -183,7 +183,10 @@ func secondRun() {
 	done := make(chan bool)
 	js.Global().Get("window").Call("setInterval", cb, UpdateFreq)
 	js.Global().Get("window").Call("setInterval", planetXCB, 5*UpdateFreq)
-	askSonic()
+	// actually trigger this on condition later.
+	if scoreboard.Teeth > 60000 {
+		askSonic()
+	}
 	if sonicModeEnabled {
 		sonicTime()
 	}
