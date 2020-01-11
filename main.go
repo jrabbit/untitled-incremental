@@ -172,6 +172,9 @@ func blit(_ js.Value, _ []js.Value) interface{} {
 	threadExperiment(dTime)
 	query("nav > h2.teeth").Set("textContent", fmt.Sprintf("%v teeth", scoreboard.Teeth))
 	// log.Printf("%+v scoreboard", scoreboard)
+	if scoreboard.Teeth > 60000 {
+		askSonic()
+	}
 	return nil
 }
 
@@ -183,10 +186,6 @@ func secondRun() {
 	done := make(chan bool)
 	js.Global().Get("window").Call("setInterval", cb, UpdateFreq)
 	js.Global().Get("window").Call("setInterval", planetXCB, 5*UpdateFreq)
-	// actually trigger this on condition later.
-	if scoreboard.Teeth > 60000 {
-		askSonic()
-	}
 	if sonicModeEnabled {
 		sonicTime()
 	}

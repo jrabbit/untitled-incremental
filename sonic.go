@@ -13,6 +13,7 @@ type Position struct {
 type Sonic struct {
 	Position Position
 	Snake    bool
+	Asking   bool
 }
 
 func keyDown(_ js.Value, args []js.Value) interface{} {
@@ -37,6 +38,7 @@ func keyDown(_ js.Value, args []js.Value) interface{} {
 }
 
 func sonicTime() {
+	//init sonic
 	sect := query("section.sonic")
 	sect.Call("removeAttribute", "hidden")
 	// key binds done here
@@ -44,13 +46,23 @@ func sonicTime() {
 	js.Global().Get("document").Call("addEventListener", "keydown", cb)
 }
 
-func askSonic() {
+func askSonic() bool {
+	// returns if added element.
+	if sonicModeEnabled {
+		return false
+	}
+	if sonic.Asking {
+		return false
+	}
 	button := js.Global().Get("document").Call("createElement", "button")
 	button.Set("textContent", "Sonic?")
 	query("#game-area").Call("append", button)
 	cb := js.FuncOf(func(_ js.Value, _ []js.Value) interface{} {
 		sonicModeEnabled = true
+		sonicTime()
 		return nil
 	})
 	button.Call("addEventListener", "click", cb)
+	sonic.Asking = true
+	return true
 }
