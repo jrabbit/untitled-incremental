@@ -1,5 +1,7 @@
 # untitled-incremental
 
+![sonic knock off icon](sanic hedgehog.png)
+
 go wasm game
 
 ## CC-BY credits
