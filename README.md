@@ -1,6 +1,6 @@
 # untitled-incremental
 
-![sonic knock off icon](/sanic hedgehog.png)
+![sonic knock off icon](https://raw.githubusercontent.com/jrabbit/untitled-incremental/master/sanic%20hedgehog.png)
 
 go wasm game
 
