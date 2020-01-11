@@ -113,10 +113,11 @@ type Brick struct {
 
 func threadExperiment(dTime time.Duration) {
 	// can we pass functions, can we call them sequentially?
-	//identity function
-	idfn := func(t time.Duration) int { return int(t.Seconds()) }
-	b := Brick{Processor: idfn, OutputField: &scoreboard.Teeth}
-	bricks := []Brick{b}
+	bricks := []Brick{{func(t time.Duration) int {
+		//identity function
+		return int(t.Seconds())
+	},
+		&scoreboard.Teeth}}
 	for _, brick := range bricks {
 		out := brick.Processor(dTime)
 		*brick.OutputField = out
