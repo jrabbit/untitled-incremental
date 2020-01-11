@@ -86,13 +86,14 @@ func (p *PlanetX) save() {
 
 var planetx PlanetX
 var sonicModeEnabled = false
+var sonic Sonic
 
 type DataItem struct {
 	Key  string
 	Item interface{}
 }
 
-var DataStore = []DataItem{DataItem{"planet_state", planetx}, {"sonic_state", sonic}}
+var DataStore = []DataItem{{"planet_state", planetx}, {"sonic_state", sonic}}
 
 func UnifiedStorageSave(d []DataItem) {
 	for _, dataitem := range d {
@@ -171,54 +172,6 @@ func blit(_ js.Value, _ []js.Value) interface{} {
 	query("nav > h2.teeth").Set("textContent", fmt.Sprintf("%v teeth", scoreboard.Teeth))
 	// log.Printf("%+v scoreboard", scoreboard)
 	return nil
-}
-
-type Position struct {
-	x int
-	y int
-}
-
-type Sonic struct {
-	Position Position
-}
-
-var sonic Sonic
-
-func keyDown(_ js.Value, args []js.Value) interface{} {
-	event := args[0]
-	switch key := event.Get("key").String(); key {
-	case "ArrowLeft":
-		sonic.Position.x = -1
-	case "ArrowRight":
-		sonic.Position.x += 1
-	case "ArrowUp":
-		sonic.Position.y += 1
-	case "ArrowDown":
-		sonic.Position.y -= 1
-	default:
-		log.Printf("random fucking key? %v", key)
-	}
-	return nil
-}
-
-func sonicTime() {
-	sect := query("section.sonic")
-	sect.Call("removeAttribute", "hidden")
-	// keybinds
-	cb := js.FuncOf(keyDown)
-	js.Global().Get("document").Call("addEventListener", "keydown", cb)
-
-}
-
-func askSonic() {
-	button := js.Global().Get("document").Call("createElement", "button")
-	button.Set("textContent", "Sonic?")
-	query("#game-area").Call("append", button)
-	cb := js.FuncOf(func(_ js.Value, _ []js.Value) interface{} {
-		sonicModeEnabled = true
-		return nil
-	})
-	button.Call("addEventListener", "click", cb)
 }
 
 func secondRun() {
